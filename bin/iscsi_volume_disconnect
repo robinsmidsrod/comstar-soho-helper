@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ -r /etc/comstar_soho_helper.conf ]; then
+    source /etc/comstar_soho_helper.conf
+else
+    echo "Please setup /etc/comstar_soho_helper.conf"
+    exit 1
+fi
+
+### NOTHING TO CHANGE BELOW HERE ###
+
+VOL_NAME=$1
+
+if [ ! $VOL_NAME ]; then
+    echo "Please specify volume (target group) to disconnect"
+    stmfadm list-tg
+    exit 1
+fi
+
+LU=$(sbdadm list-lu | grep $VOL_NAME | awk '{ print $1 }')
+if [ $LU ]; then
+    sbdadm delete-lu $LU
+fi

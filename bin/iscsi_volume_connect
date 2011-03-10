@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ -r /etc/comstar_soho_helper.conf ]; then
+    source /etc/comstar_soho_helper.conf
+else
+    echo "Please setup /etc/comstar_soho_helper.conf"
+    exit 1
+fi
+
+VOL_NAME=$1
+
+if [ ! $VOL_NAME ]; then
+    echo "Please specify a volume from the list below:"
+    ls -l /dev/zvol/rdsk/$ZFS_POOL/ | grep '^l' | awk '{ print $9 }'
+    exit 1
+fi
+
+LU=$(sbdadm list-lu | grep $VOL_NAME | awk '{ print $1 }')
+if [ ! $LU ]; then
+    sbdadm create-lu /dev/zvol/rdsk/$ZFS_POOL/$VOL_NAME
+fi

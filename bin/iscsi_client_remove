@@ -1,0 +1,13 @@
+#!/bin/bash
+
+CLIENT_NAME=$1
+CLIENT_IQN=$2
+if [ $CLIENT_NAME ]; then
+    if [ $CLIENT_IQN ]; then
+        stmfadm remove-hg-member -g $CLIENT_NAME $CLIENT_IQN
+    fi
+    stmfadm list-hg -v $CLIENT_NAME
+else
+    echo "Please specify client hostname and client-iqn to remove"
+    stmfadm list-hg
+fi

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+CLIENT_NAME=$1
+CLIENT_IQN=$2
+if [ $CLIENT_NAME ]; then
+    # Create a Host Group for your client
+    stmfadm create-hg $CLIENT_NAME
+    if [ $CLIENT_IQN ]; then
+	# Add IQN to Host Group
+    	stmfadm add-hg-member -g $CLIENT_NAME $CLIENT_IQN
+        stmfadm list-hg -v $CLIENT_NAME
+    else
+    	echo "Please specify client-iqn as well"
+        stmfadm list-hg -v $CLIENT_NAME
+    fi
+else
+    echo "Please specify client-name and client-iqn to add"
+    stmfadm list-hg
+fi

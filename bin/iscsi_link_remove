@@ -1,0 +1,13 @@
+#!/bin/bash
+
+VOL_NAME=$1
+if [ $VOL_NAME ]; then
+    # Resolve LU for zvol
+    LU=$(sbdadm list-lu | grep $VOL_NAME | awk '{ print $1 }')
+    if [ $LU ]; then
+    	stmfadm remove-view -a -l $LU 
+    fi
+else
+    echo "Please specify volume (target group) to remove"
+    stmfadm list-tg
+fi

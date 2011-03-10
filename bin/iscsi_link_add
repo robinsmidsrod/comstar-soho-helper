@@ -1,0 +1,24 @@
+#!/bin/bash
+
+VOL_NAME=$1
+CLIENT_NAME=$2
+if [ $VOL_NAME ]; then
+    # Resolve LU for zvol
+    LU=$(sbdadm list-lu | grep $VOL_NAME | awk '{ print $1 }')
+    if [ $CLIENT_NAME ]; then
+	VIEWS=$(stmfadm list-view -l $LU 2>/dev/null | grep 'View Entry' | wc -l)
+	if [ $VIEWS -gt 0 ]; then
+	    echo "View already present, not adding a new one..."
+	else
+            stmfadm add-view -t $VOL_NAME -h $CLIENT_NAME $LU
+	fi
+        stmfadm list-view -l $LU 2>/dev/null
+    else
+        echo "Please specify client (host group) as well"
+        stmfadm list-hg
+        stmfadm list-view -l $LU 2>/dev/null
+    fi
+else
+    echo "Please specify volume (target group) to link"
+    stmfadm list-tg
+fi

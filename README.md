@@ -42,7 +42,8 @@ iSCSI Terminology
 =================
 
 If you are struggling with iSCSI terminology, the excellent [tutorial by
-tek-blog.com](1) helped me understand more of it.
+tek-blog.com](http://tek-blog.com/main/index.php?blog=2&title=comstar_howto&more=1&c=1&tb=1&pb=1)
+helped me understand more of it.
 
 Below I've added my understanding of some common iSCSI terms:
 
@@ -70,12 +71,10 @@ Robin Smidsrød <robin@smidsrod.no>
 Copyright
 =========
 
-Copyright 2011 Robin Smidsrød <robin@smidsrod.no>
+Robin Smidsrød <robin@smidsrod.no>
 
 License
 =======
 
-This code is licensed according to the [Artistic License 2.0](2).
-
-[1]: http://tek-blog.com/main/index.php?blog=2&title=comstar_howto&more=1&c=1&tb=1&pb=1
-[2]: http://www.perlfoundation.org/artistic_license_2_0
+This code is licensed according to the [Artistic License
+2.0](http://www.perlfoundation.org/artistic_license_2_0).

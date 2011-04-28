@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if [ -r /etc/comstar_soho_helper.conf ]; then
+    source /etc/comstar_soho_helper.conf
+else
+    echo "Please setup /etc/comstar_soho_helper.conf"
+    exit 1
+fi
+
+############################## NOTHING TO CHANGE BELOW ####################
+
+# Name of the volume you want to create
+VOL_NAME=$1
+# Filename for the ISO
+ISO_FILE=$2
+
+if [ ! $VOL_NAME ]; then
+    echo "Please specify the name of the iSCSI target (local part only) you want to create"
+    exit 1;
+fi
+
+if [ ! $ISO_FILE ]; then
+    echo "Please specify the full path to the ISO you want to mount"
+    exit 2;
+fi
+
+# Create default Target Portal Group (network/port listening)
+itadm create-tpg private-ipv4 $(ifconfig $TGT_NET_INTERFACE | grep inet | awk '{ print $2 }')
+#itadm list-tpg -v myportal
+
+# Create physical backing store + LU
+touch "${ISO_FILE}.meta"
+stmfadm create-lu -p wp=true -p "meta=${ISO_FILE}.meta" "$ISO_FILE"
+#sbdadm list-lu | grep "$ISO_FILE" | awk '{ print $1 }'
+
+# Create target IQN (iSCSI name for your storage volume)
+itadm create-target -t private-ipv4 -n $TGT_IQN_BASE:$VOL_NAME
+#itadm list-target -v $TGT_IQN_BASE:$VOL_NAME
+
+# Create a Target Group for your target IQN (we just use that one)
+# (basically just a way to refer to multiple TGT IQNs as one, for redundancy etc.)
+stmfadm create-tg $VOL_NAME
+stmfadm offline-target $TGT_IQN_BASE:$VOL_NAME
+stmfadm add-tg-member -g $VOL_NAME $TGT_IQN_BASE:$VOL_NAME
+stmfadm online-target $TGT_IQN_BASE:$VOL_NAME
+#stmfadm list-tg -v $VOL_NAME
+
+echo
+echo "To publish this LU to all clients, use this command:"
+echo "iscsi_link_add_all_iso $VOL_NAME $ISO_FILE
